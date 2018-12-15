@@ -13,4 +13,10 @@ public interface ClienteRepository {
 
     int update(Cliente cliente);
 
+    void insert(Cliente cliente);
+
+    void abonarCuenta(String cuenta, double monto);
+    void debitarCuenta(String cuenta, double monto);
+
+
 }

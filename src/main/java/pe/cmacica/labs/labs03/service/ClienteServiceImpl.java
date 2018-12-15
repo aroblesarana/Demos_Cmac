@@ -2,6 +2,7 @@ package pe.cmacica.labs.labs03.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.cmacica.labs.labs03.dominio.Cliente;
 import pe.cmacica.labs.labs03.repository.ClienteRepository;
 
@@ -31,5 +32,31 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public int update(Cliente cliente) {
         return clienteRepository.update(cliente);
+    }
+
+    @Override
+    public void insert(Cliente cliente) {
+        clienteRepository.insert(cliente);
+    }
+
+    @Override
+    @Transactional
+    public void insert(List<Cliente> clientes) {
+
+
+        clientes.forEach(cliente -> {
+            clienteRepository.insert(cliente);
+            if (cliente.getApe_pat().equalsIgnoreCase("ZEGARRA")){
+                throw new RuntimeException();
+            }
+        });
+    }
+
+    @Transactional
+    @Override
+    public void transferir(String cuentaorigen, String cuentaDestino, double monto) {
+        clienteRepository.debitarCuenta(cuentaorigen, monto);
+        clienteRepository.abonarCuenta(cuentaDestino, monto);
+
     }
 }

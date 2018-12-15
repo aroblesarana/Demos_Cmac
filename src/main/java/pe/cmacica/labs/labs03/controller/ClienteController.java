@@ -8,9 +8,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import pe.cmacica.labs.labs03.controller.dto.ClientesDTO;
 import pe.cmacica.labs.labs03.dominio.Cliente;
 import pe.cmacica.labs.labs03.service.ClienteService;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,17 +47,29 @@ public class ClienteController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClienteController.class);
 
     @PostMapping
-    public HttpEntity<String> guardar(@RequestBody Cliente cliente){
-        LOGGER.debug("{}",cliente.getId());
-        LOGGER.debug(cliente.getNombres());
+    public HttpEntity<String> guardar(@Valid @RequestBody Cliente cliente){
 
-        return ResponseEntity.accepted().build();
+        LOGGER.debug("INSERT");
+        if (StringUtils.isBlank(cliente.getNombres())){
+            return ResponseEntity.badRequest().build();
+        }
+
+
+        clienteService.insert(cliente);
+
+        /*LOGGER.debug("{}",cliente.getId());
+        LOGGER.debug(cliente.getNombres());*/
+
+
+        //return ResponseEntity.accepted().build();
+        return ResponseEntity.ok().build();
 
     }
 
 
     @PutMapping("/{id}")
-    public HttpEntity<String> actualizar(@PathVariable("id") int id, @RequestBody Cliente cliente){
+    public HttpEntity<String> actualizar(@PathVariable("id") int id,
+                                         @Valid @RequestBody Cliente cliente){
 
         LOGGER.debug("UPDATE");
         if(id==0){
@@ -100,5 +114,11 @@ public class ClienteController {
     }
 
 
+    @PostMapping("/batch")
+    public HttpEntity<String> guardar(@Valid @RequestBody ClientesDTO clientesDTO){
+
+        clienteService.insert(clientesDTO.getClientes());
+        return ResponseEntity.ok().build();
+    }
 
 }

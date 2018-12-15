@@ -5,9 +5,15 @@ services:
     image: mysql:5.7
     restart: always
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: customersdb
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+  rabbit:
+    image: rabbitmq:3-management-alpine
+    restart: always
+    ports:
+      - 8086:15672
+      - 5672:5672
